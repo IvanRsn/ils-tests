@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, maximum-scale=1" />
+    <title>ILS: Test 9</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script src="https://api-maps.yandex.ru/2.1/?apikey=3abd9f8c-649d-4525-810b-56027ce1497c&lang=ru_RU" type="text/javascript"></script>
+    <script src="https://yastatic.net/s3/mapsapi-jslibs/area/0.0.1/util.calculateArea.min.js" type="text/javascript"></script>
+    <script>
+        $(function() {
+            ymaps.ready(['util.calculateArea']).then(function() {
+                var myMap = new ymaps.Map("YMapsID", {
+                    center: [55.76, 37.64],
+                    zoom: 12
+                });
+
+                // Создаем многоугольник.
+                var myGeoObject = new ymaps.GeoObject({
+                    geometry: {
+                        type: "Polygon",
+                        coordinates: [
+                            [
+                                [ 55.76474257527869, 37.58904266357353 ],
+                                [ 55.751636161399446, 37.58200454711822 ],
+                                [ 55.73874767661528, 37.586186981200264 ],
+                                [ 55.72997706814916, 37.61136665344148 ],
+                                [ 55.730531533585385, 37.636659431456586 ],
+                                [ 55.741801492408825, 37.65394067764194 ],
+                                [ 55.758229678341856, 37.657603120802946 ],
+                                [ 55.763763226657844, 37.65611547231584 ],
+                                [ 55.76852181863644, 37.64913465976626 ],
+                                [ 55.773586579595936, 37.62590332031156 ],
+                                [ 55.77269558503345, 37.603884124755034 ],
+                                [ 55.76474257527869, 37.58904266357353 ]
+                            ]
+                        ]
+                    }
+                }, {
+                    // Описываем опции геообъекта.
+                    // Цвет заливки.
+                    fillColor: '#FF0000',
+                    // Цвет обводки.
+                    strokeColor: '#FF0000',
+                    // Общая прозрачность (как для заливки, так и для обводки).
+                    opacity: 0.3,
+                    // Ширина обводки.
+                    strokeWidth: 3,
+                    // Стиль обводки.
+                    strokeStyle: 'solid',
+                    editorDrawingCursor: "crosshair"
+                });
+
+                // Размещение геообъекта на карте.
+                myMap.geoObjects.add(myGeoObject);
+
+                // Вычисляем площадь геообъекта.
+                var area = Math.round(ymaps.util.calculateArea(myGeoObject))
+                if (area <= 1e6) {
+                    area += ' м²';
+                } else {
+                    area = (area / 1e6).toFixed(3) + ' км²';
+                }
+                $('#result-area').text('Площадь выделенной области: '+area);
+
+                myGeoObject.editor.startEditing();
+                myGeoObject.geometry.events.add('change', function(e) {
+                    // console.log(coords = myGeoObject.geometry.getCoordinates());
+
+                    // Вычисляем площадь геообъекта.
+                    var area = Math.round(ymaps.util.calculateArea(myGeoObject))
+                    if (area <= 1e6) {
+                        area += ' м²';
+                    } else {
+                        area = (area / 1e6).toFixed(3) + ' км²';
+                    }
+                    $('#result-area').text('Площадь выделенной области: '+area);                    
+                });
+
+            });
+        });
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            padding: 0;
+            margin: 0;
+        }
+        
+        html {
+            height: 100%;
+        }
+        
+        body {
+            height: 100%;
+            min-height: 100%;
+        }
+
+        #result-area {
+            width: 800px;
+            border: 2px solid #d65454;
+            margin: 3px;
+            padding: 3px;
+            font-size: 20px;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="YMapsID" style="width: 800px; height: 600px;"></div>
+    <div id="result-area"></div>
+</body>
+
+</html>

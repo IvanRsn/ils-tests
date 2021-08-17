@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILS: Test 7</title>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+    <script>
+
+        $(function() {
+
+            // Событие при наведении
+            $('html').on('dragover', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                $('h1').text('Поместите файл сюда');
+            });
+
+            $('html').on('drop', function(e) { e.preventDefault(); e.stopPropagation(); });
+
+            // Событие - курсор с файлом в нужной области.
+            $('.upload-area').on('dragenter, dragover', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+                $('h1').text('Отпустите');
+            });
+
+            // Обработка события - файл заброшен в область загрузки
+            $('.upload-area').on('drop', function (e) {
+                e.stopPropagation();
+                e.preventDefault();
+
+                $('h1').text('Загрузка');
+
+                var fd = new FormData();
+                var file = e.originalEvent.dataTransfer.files;
+                fd.append('fileName', file[0].name);
+                fd.append('file', file[0]);
+                uploadData(fd);
+            });
+
+            // Обработка поведения при клике
+            $('#uploadfile').click(function(){
+                $('#file').click();
+            });
+
+            // Событие - файл выбран
+            $('#file').change(function(){
+                var fd = new FormData();
+                var file = $('#file')[0].files[0];
+                fd.append('fileName', file.name);
+                fd.append('file',file);
+                uploadData(fd);
+            });
+
+        });
+
+        // Отправка AJAX запроса с файлом на обработку
+        function uploadData(formData) {
+
+            let fileName = formData.get('fileName');
+
+            if (!/\.json$/i.test(fileName)) {
+                alert('Принимаются только *.json файлы.');
+                $('h1').html('Перетащите сюда файл <br> или <br> кликните для выбора файла');
+                return false;
+            }
+
+            $.ajax({
+                url: 'uploader.php',
+                type: 'post',
+                data: formData,
+                contentType: false,
+                processData: false,
+                dataType: 'html',
+                success: function(response){
+                    $('.result').html(response);
+                    $('h1').html('Перетащите сюда файл <br> или <br> кликните для выбора файла');
+                }
+            });
+        }
+
+    </script>
+
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        .upload-area{
+            width: 70%;
+            height: 200px;
+            border: 2px solid lightgray;
+            border-radius: 3px;
+            margin: 0 auto;
+            margin-top: 100px;
+            text-align: center;
+            overflow: auto;
+        }
+
+        .upload-area:hover{
+            cursor: pointer;
+        }
+
+        .upload-area h1{
+            text-align: center;
+            font-weight: normal;
+            font-family: sans-serif;
+            line-height: 50px;
+            color: darkslategray;
+        }
+
+        #file{
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <input type="file" name="file" id="file" accept=".json">
+        
+        <div class="upload-area"  id="uploadfile">
+            <h1>Перетащите сюда файл <br> или <br> кликните для выбора файла</h1>
+        </div>
+    </div>
+
+    <div class="result"></div>
+</body>
+</html>

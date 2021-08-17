@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ILS: Test 1</title>
+    <script>
+
+        function array_flip( objIncome )
+        {
+            let key, objResult = {};
+
+            for ( key in objIncome ) {
+                if ( objIncome.hasOwnProperty( key ) ) {
+                    objResult[ objIncome[key] ] = key;
+                }
+            }
+
+            return objResult;
+        }
+
+    </script>
+</head>
+<body>
+    <script>
+
+        var objData = {
+            'a' : 1,
+            'b' : 2,
+            'c' : 3,
+        }
+
+        document.write( JSON.stringify( objData ) );
+        document.write( '<br><br>' );
+
+        var objResult = array_flip( objData );
+        document.write( JSON.stringify( objResult ) );
+
+    </script>
+</body>
+</html>
